@@ -1,17 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var Connection = require('tedious').Connection;
-var Request = require('tedious').Request;
-/*
- var config = {
- userName: 'testuser', // update me
- password: 'test', // update me
- server: '127.0.0.1', // update me
- options: {
- database: 'tdb' //update me
- }
- }
- */
 
 const config = {
   user: 'testuser',
@@ -23,47 +11,6 @@ const config = {
   }
 };
 
-/*
- // Create connection to database
- var config = {
- userName: 'testuser', // update me
- password: 'test', // update me
- server: '127.0.0.1', // update me
- options: {
- database: 'tdb' //update me
- }
- }
- var connection = new Connection(config);
-
- // Attempt to connect and execute queries if connection goes through
- connection.on('connect', function(err) {
- if (err) {
- console.log(err)
- }
- else{
- queryDatabase()
- }
- });
-
- function queryDatabase(){
- console.log('Reading rows from the Table...');
-
- // Read all rows from table
- request = new Request(
- "SELECT 1 as 'lofasz'",
- function(err, rowCount, rows) {
- console.log(rowCount + ' row(s) returned');
- }
- );
-
- request.on('row', function(columns) {
- columns.forEach(function(column) {
- console.log("%s\t%s", column.metadata.colName, column.value);
- });
- });
-
- connection.execSql(request);
- };*/
 //creating connection pool
 const sql = require('mssql');
 var spool;
@@ -73,22 +20,132 @@ sql.connect(config).then(pool => {
   return pool;
 });
 
-//Server=localhost;Database=master;Trusted_Connection=True;
-
-/* GET home page. */
 router.get('/', function (req, res, next) {
-  bool isRequest = false;
-  if (req.query.duration !== undefined)
-    isRequest =true;
-
+  var isRequest = false;
+  if (req.query.service !== undefined) {
+    isRequest = true;
+  }
+  var loc;
+  var sumc = 0;
+  var sumo = 0;
+  var capexdata;
+  //console.log(isRequest);
   spool.request()
-    .query("SELECT TOP (1000) [asd]  FROM [tdb].[dbo].[lofasz]").then(result => {
+    .query("SELECT * FROM [tdb].[dbo].[DST3]").then(locations => {
+    loc = locations;
+    if (!isRequest) {
+      res.render('index', {capex: null, opex: null, sumc: 0, sumo: 0, places: loc.recordset});
+      return;
+    }
     //handling results
-    var capex = [{item: "asd", price: "500"}, {item: "as4d", price: "5002"}];
-    var opex = [{item: "asd", price: "500"}, {item: "as4d", price: "5002"}];
-    var sumc = result.recordset[0].asd;
-    var sumo = result.recordset[1].asd;
-    res.render('index', {title: 'Express', capex: capex, opex: opex, sumc: sumc, sumo: sumo});
+    spool.request()
+      .input('service', req.query.service)
+      .input('speed', sql.Int, req.query.speed)
+      .input('channels', sql.Int, req.query.channels)
+      .input('distance', sql.Int, req.query.distance)
+              .query(`
+          SELECT name, price, amount, price*amount as sum, type FROM
+        (SELECT TOP 1 *  FROM [tdb].[dbo].[CAPEX2]
+        WHERE (service = 'all' OR service = @service) 
+        AND (type = 'CPE')
+        AND ((maxSpeed >= @speed OR maxSpeed IS NULL)
+        AND (maxDistance >= @distance OR maxDistance IS NULL)
+        AND (maxChannels >= @channels OR maxChannels IS NULL))
+        ORDER BY price*amount ASC) as cpe
+        
+        UNION
+        
+        SELECT name, price, amount, price*amount as sum, type FROM
+        (SELECT TOP 1 *  FROM [tdb].[dbo].[CAPEX2]
+        WHERE (service = 'all' OR service = @service) 
+        AND (type = 'TRM')
+        AND ((maxSpeed >= @speed OR maxSpeed IS NULL)
+        AND (maxDistance >= @distance OR maxDistance IS NULL)
+        AND (maxChannels >= @channels OR maxChannels IS NULL))
+        ORDER BY price*amount ASC) as trm
+        
+        UNION 
+        
+        SELECT name, price, amount, price*amount as sum, type  FROM [tdb].[dbo].[CAPEX2]
+        WHERE (service = 'all' OR service = @service) 
+        AND (type IS NULL)
+        AND ((maxSpeed >= @speed OR maxSpeed IS NULL)
+        AND (maxDistance >= @distance OR maxDistance IS NULL)
+        AND (maxChannels >= @channels OR maxChannels IS NULL))
+        
+        ORDER BY type DESC
+`).then(result => {
+      //handling results
+      capexdata = result;
+      for (var item in result.recordset)
+      {
+        sumc += result.recordset[item].sum;
+      }
+      spool.request()
+        .input('service', req.query.service)
+        .input('speed', sql.Int, req.query.speed)
+        .input('channels', sql.Int, req.query.channels)
+        .input('distance', sql.Int, req.query.distance)
+        .query(`
+          SELECT name, price, amount, price*amount as sum, type FROM
+(SELECT TOP 1 *  FROM [tdb].[dbo].[OPEX]
+WHERE (service = 'all' OR service = @service) 
+AND (type = 'TRM')
+AND ((maxSpeed >= @speed OR maxSpeed IS NULL)
+AND (maxDistance >= @distance OR maxDistance IS NULL)
+AND (maxChannels >= @channels OR maxChannels IS NULL))
+ORDER BY price*amount ASC) as cpe
+
+UNION
+
+SELECT name, price, amount, price*amount as sum, type FROM
+(SELECT TOP 1 *  FROM [tdb].[dbo].[OPEX]
+WHERE (service = 'all' OR service = @service) 
+AND (type = 'CG')
+AND ((maxSpeed >= @speed OR maxSpeed IS NULL)
+AND (maxDistance >= @distance OR maxDistance IS NULL)
+AND (maxChannels >= @channels OR maxChannels IS NULL))
+ORDER BY price*amount ASC) as trm
+
+UNION
+
+SELECT name, price, amount, price*amount as sum, type FROM
+(SELECT TOP 1 *  FROM [tdb].[dbo].[OPEX]
+WHERE (service = 'all' OR service = @service) 
+AND (type = 'DST')
+AND ((maxSpeed >= @speed OR maxSpeed IS NULL)
+AND (maxDistance >= @distance OR maxDistance IS NULL)
+AND (maxChannels >= @channels OR maxChannels IS NULL))
+ORDER BY price*amount ASC) as dst
+
+UNION 
+
+SELECT name, price, amount, price*amount as sum, type  FROM [tdb].[dbo].[OPEX]
+WHERE (service = 'all' OR service = @service) 
+AND (type IS NULL)
+AND ((maxSpeed >= @speed OR maxSpeed IS NULL)
+AND (maxDistance >= @distance OR maxDistance IS NULL)
+AND (maxChannels >= @channels OR maxChannels IS NULL))
+
+ORDER BY type DESC
+
+`).then(result => {
+        //handling results
+        for (var item in result.recordset)
+        {
+          sumo += result.recordset[item].sum;
+        }
+        // var sumc = result.recordset[0].asd;
+        //var sumo = result.recordset[1].asd;
+        res.render('index', {capex: capexdata.recordset, opex: result.recordset, sumc: sumc, sumo: sumo, places: loc.recordset});
+      }).catch(err => {
+        // ... error checks
+        console.log(err);
+      });
+    }).catch(err => {
+      // ... error checks
+      console.log(err);
+    });
   }).catch(err => {
     // ... error checks
     console.log(err);

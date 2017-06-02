@@ -3,56 +3,41 @@
         <label for="example-text-input" class="col-2 col-form-label">Service</label>
         <div class="col-10">
             <select name="service" class="form-control">
-                <option value="volvo">LLI</option>
-                <option value="saab">LL</option>
-                <option value="opel">PBX</option>
-                <option value="audi">IPVPN</option>
+                <option value="lli">LLI</option>
+                <option value="ll">LL</option>
+              <option value="pbx-isdn-g703">PBX - ISDN - G703</option>
+              <option value="pbx-sip">PBX - SIP</option>
+              <option value="pbx-isdn-bri">PBX - ISDN - BRI</option>
+                <option value="ipvpn">IPVPN</option>
             </select>
         </div>
     </div>
     <div class="form-group row">
         <label for="example-text-input" class="col-2 col-form-label">Location</label>
         <div class="col-10">
-            <select name="location" class="form-control">
-                <option value="volvo">Budapest</option>
-                <option value="saab">Debrecen</option>
-                <option value="opel">Bugyi</option>
-                <option value="audi">Győr</option>
+            <select name="distance" class="form-control">
+              <option value="0">Budapest</option>
+                {{#each places}}
+                  <option value="{{distance}}">{{location}}</option>
+                  {{/each}}
             </select>
         </div>
     </div>
     <div class="form-group row  has-error  has-feedback">
-    <label for="example-text-input" class="col-2 col-form-label">Speed (Mbps)</label>
+    <label for="example-text-input" class="col-2 col-form-label">Speed (Mbps - enter 0 for PBX)</label>
     <div class="col-10">
         <input class="form-control" type="text" value="10" id="example-text-input" name="speed">
     </div>
 </div>
     <div class="form-group row">
-    <label for="example-text-input" class="col-2 col-form-label">Duration (years)</label>
+    <label for="example-text-input" class="col-2 col-form-label">Max channels (PBX only)</label>
     <div class="col-10">
-        <input class="form-control" type="text" value="3" id="example-text-input" name="duration">
+        <input class="form-control" type="text" value="30" id="example-text-input" name="channels">
     </div>
 </div>
-    <div class="form-group row">
-    <label for="example-text-input" class="col-2 col-form-label">Uptime</label>
-    <div class="col-10">
-        <select name="uptime" class="form-control">
-            <option value="volvo">99.5%</option>
-            <option value="saab">99.8%</option>
-            <option value="opel">99.9%</option>
-        </select>
-    </div>
-</div>
+
     <div style="text-align: right;" class="row">
     <input type="submit" class="btn btn-success" value="OK"></div>
-</form>
-
-<form action="/action_page.php">
-  First name:<br>
-  <input type="text" name="firstname" value="Mickey"><br>
-  Last name:<br>
-  <input type="text" name="lastname" value="Mouse"><br><br>
-  <input type="submit" value="Submit">
 </form>
 
 <br><br><h1>Results:</h1>
@@ -62,7 +47,6 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>#</th>
             <th>Item</th>
             <th>Amount</th>
             <th>Price</th>
@@ -72,11 +56,10 @@
         <tbody>
         {{#each capex}}
           <tr>
-            <td></td>
-            <td>{{item}}</td>
-            <td>1</td>
+            <td>{{name}}</td>
+            <td>{{amount}}</td>
             <td>{{price}}</td>
-            <td>600000</td>
+            <td>{{sum}}</td>
           </tr>
         {{/each}}
         </tbody>
@@ -89,26 +72,24 @@
 <div class="container">
     <h2>OPEX:</h2>
     <table class="table table-striped">
-        <thead>
+      <thead>
+      <tr>
+        <th>Item</th>
+        <th>Amount</th>
+        <th>Price</th>
+        <th>Sum</th>
+      </tr>
+      </thead>
+      <tbody>
+      {{#each opex}}
         <tr>
-            <th>#</th>
-            <th>Item</th>
-            <th>Amount</th>
-            <th>Price</th>
-            <th>Sum</th>
+          <td>{{name}}</td>
+          <td>{{amount}}</td>
+          <td>{{price}}</td>
+          <td>{{sum}}</td>
         </tr>
-        </thead>
-        <tbody>
-        {{#each opex}}
-          <tr>
-            <td></td>
-            <td>{{item}}</td>
-            <td>1</td>
-            <td>{{price}}</td>
-            <td>600000</td>
-          </tr>
-        {{/each}}
-        </tbody>
+      {{/each}}
+      </tbody>
 
     </table>
     <div style="text-align: right">
