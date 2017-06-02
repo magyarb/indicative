@@ -6,7 +6,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var Handlebars     = require('handlebars');
-var HandlebarsIntl = require('handlebars-intl');
+//var HandlebarsIntl = require('handlebars-intl');
 var NumeralHelper = require("handlebars.numeral");
 
 
