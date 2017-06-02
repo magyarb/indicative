@@ -1,8 +1,8 @@
-<form>
+<form action="/" method="get">
     <div class="form-group row">
         <label for="example-text-input" class="col-2 col-form-label">Service</label>
         <div class="col-10">
-            <select name="carlist" form="carform" class="form-control">
+            <select name="service" class="form-control">
                 <option value="volvo">LLI</option>
                 <option value="saab">LL</option>
                 <option value="opel">PBX</option>
@@ -13,7 +13,7 @@
     <div class="form-group row">
         <label for="example-text-input" class="col-2 col-form-label">Location</label>
         <div class="col-10">
-            <select name="carlist" form="carform" class="form-control">
+            <select name="location" class="form-control">
                 <option value="volvo">Budapest</option>
                 <option value="saab">Debrecen</option>
                 <option value="opel">Bugyi</option>
@@ -21,22 +21,22 @@
             </select>
         </div>
     </div>
-    <div class="form-group row">
+    <div class="form-group row  has-error  has-feedback">
     <label for="example-text-input" class="col-2 col-form-label">Speed (Mbps)</label>
     <div class="col-10">
-        <input class="form-control" type="text" value="10" id="example-text-input">
+        <input class="form-control" type="text" value="10" id="example-text-input" name="speed">
     </div>
 </div>
     <div class="form-group row">
     <label for="example-text-input" class="col-2 col-form-label">Duration (years)</label>
     <div class="col-10">
-        <input class="form-control" type="text" value="3" id="example-text-input">
+        <input class="form-control" type="text" value="3" id="example-text-input" name="duration">
     </div>
 </div>
     <div class="form-group row">
     <label for="example-text-input" class="col-2 col-form-label">Uptime</label>
     <div class="col-10">
-        <select name="carlist" form="carform" class="form-control">
+        <select name="uptime" class="form-control">
             <option value="volvo">99.5%</option>
             <option value="saab">99.8%</option>
             <option value="opel">99.9%</option>
@@ -44,7 +44,15 @@
     </div>
 </div>
     <div style="text-align: right;" class="row">
-    <button type="submit" class="btn btn-default">OK</button></div>
+    <input type="submit" class="btn btn-success" value="OK"></div>
+</form>
+
+<form action="/action_page.php">
+  First name:<br>
+  <input type="text" name="firstname" value="Mickey"><br>
+  Last name:<br>
+  <input type="text" name="lastname" value="Mouse"><br><br>
+  <input type="submit" value="Submit">
 </form>
 
 <br><br><h1>Results:</h1>
@@ -62,31 +70,19 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
+        {{#each capex}}
+          <tr>
+            <td></td>
+            <td>{{item}}</td>
             <td>1</td>
-            <td>TRM (30 Mbps - Not Budapest)</td>
-            <td>1</td>
+            <td>{{price}}</td>
             <td>600000</td>
-            <td>600000</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>CPE (30 Mbps): Huawei LS-S2309TP-EI-AC</td>
-            <td>1</td>
-            <td>55275</td>
-            <td>55275</td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>Config</td>
-            <td>1</td>
-            <td>50000</td>
-            <td>50000</td>
-        </tr>
+          </tr>
+        {{/each}}
         </tbody>
     </table>
     <div style="text-align: right">
-        <h2>SUM CAPEX: 705275 HUF</h2>
+        <h2>SUM CAPEX: {{sumc}} HUF</h2>
     </div>
 </div>
 <hr>
@@ -103,31 +99,19 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
+        {{#each opex}}
+          <tr>
+            <td></td>
+            <td>{{item}}</td>
             <td>1</td>
-            <td>TRM (30 Mbps)</td>
-            <td>1</td>
-            <td>0</td>
-            <td>0</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>Capacity Governance</td>
-            <td>1</td>
-            <td>10</td>
-            <td>1000</td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>Distance</td>
-            <td>50</td>
-            <td>40</td>
-            <td>2000</td>
-        </tr>
+            <td>{{price}}</td>
+            <td>600000</td>
+          </tr>
+        {{/each}}
         </tbody>
 
     </table>
     <div style="text-align: right">
-        <h2>SUM OPEX: 3000 HUF</h2>
+        <h2>SUM OPEX: {{sumo}} HUF</h2>
     </div>
 </div>
