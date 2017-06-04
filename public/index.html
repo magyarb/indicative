@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Indicative</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="/stylesheets/style.css"/>
+  <script
+    src="https://code.jquery.com/jquery-3.2.1.js"
+    integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+    crossorigin="anonymous"></script>
+
+  <script src="script.js"></script>
+  <script src="jquery.formatCurrency-1.4.0.pack.js"></script>
+</head>
+<body>
+<div class="container">
+  <div class="header clearfix">
+    <nav>
+      <ul class="nav nav-pills pull-right">
+        <li role="presentation"><a href="maikport">Edit source data</a></li>
+        <li role="presentation"><a href="/docs">Docs</a></li>
+      </ul>
+    </nav>
+    <a href="/"><h3 class="text-muted"><img
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Vodafone_%282002-2006%29.svg/2000px-Vodafone_%282002-2006%29.svg.png"
+      height="60"/></h3></a>
+  </div>
+
+
+  <div class="row">
+    <!--form start -->
+    <!--service selector -->
+    <div class="form-group row" id="serviceSelector">
+      <label class="col-2 col-form-label">Service</label>
+      <div class="col-10">
+        <select name="service" class="form-control" id="serviceSelectorInput">
+          <option value="lli">LLI</option>
+          <option value="ll">LL</option>
+          <option value="pbx-isdn-g703">PBX - ISDN - G703</option>
+          <option value="pbx-sip">PBX - SIP</option>
+          <option value="pbx-isdn-bri">PBX - ISDN - BRI</option>
+          <option value="ipvpn">IPVPN</option>
+        </select>
+      </div>
+    </div>
+    <!--location selector -->
+    <div class="form-group row" id="locationSelector">
+      <label class="col-2 col-form-label">Location</label>
+      <div class="col-10">
+        <select name="distance" class="form-control" id="locations">
+          <option value="0">Budapest</option>
+          <!--the js loads all the locations here -->
+        </select>
+      </div>
+    </div>
+    <!--speed selector -->
+    <div class="form-group row" id="speedSelector">
+      <label class="col-2 col-form-label">Speed (Mbps)</label>
+      <div class="col-10">
+        <input class="form-control" type="text" value="" id="speedSelectorInput" name="speed">
+      </div>
+    </div>
+    <!--channel selector -->
+    <div class="form-group row" id="channelSelector">
+      <label class="col-2 col-form-label">Max channels</label>
+      <div class="col-10">
+        <input class="form-control" type="text" value="" id="channelSelectorInput" name="channels">
+      </div>
+    </div>
+
+    <div style="text-align: right;" class="row">
+      <input type="submit" id="submit" class="btn btn-success" value="OK"></div>
+    <!--form end -->
+    <div id="results">
+      <br><br>
+      <h1>Results:</h1>
+
+      <div class="container">
+        <h2>CAPEX:</h2>
+        <table class="table table-striped" id="capextable">
+
+        </table>
+        <div style="text-align: right">
+          <h2>SUM CAPEX: <span id="sumcapex"></span></h2>
+        </div>
+      </div>
+      <hr>
+      <div class="container">
+        <h2>OPEX:</h2>
+        <table class="table table-striped" id="opextable">
+        </table>
+        <div style="text-align: right">
+          <h2>SUM OPEX: <span id="sumopex"></span></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer" style="size: 7px; ">
+    <!--<p >&copy; 2017 Magyar Balázs<br>magyarb94@gmail.com</p>-->
+    <p>C2 - Vodafone Internal</p>
+
+  </footer>
+
+</div> <!-- /container -->
+</body>
+</html>
