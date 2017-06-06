@@ -35,6 +35,8 @@ $(document).ready(function () {
 
   //button click handler
   $('#submit').click(function () {
+    window.sumCapex = 0;
+    window.sumOpex = 0;
     $.get("/capex", { service: $('#serviceSelectorInput').val(), speed: $('#speedSelectorInput').val(), channels: $('#channelSelectorInput').val() }, function (data, status) {
       drawTableE(data, "capextable");
     });
